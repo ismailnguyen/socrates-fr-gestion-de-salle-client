@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SoCraTes - Gestion de salle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+  </head>
+  <body>
+      <section class="hero is-primary is-fullheight">
+          <div class="hero-body">
+              <div class="container">
+                <div class="columns is-5-tablet is-4-desktop is-3-widescreen">
+                    <div class="column">
+                        <div class="box">
+                            <div class="field has-text-centered">
+                                <img src="https://pbs.twimg.com/profile_images/575744577929244673/oefTn0l5.png" width="167">
+                            </div>
+                            <div class="field">
+                                <label class="label">Prénom</label>
+                                <div class="control has-icons-left">
+                                   <input id="prenom" class="input" type="text" placeholder="e.g Eric" value="Eric">
+                                </div>
+                            </div>
+							 <div class="field">
+                                <label class="label">Nom</label>
+                                <div class="control has-icons-left">
+                                   <input id="nom" class="input" type="text" placeholder="e.g Dupont" value="Dupont">
+                                </div>
+                            </div>
+							<div class="field is-grouped">
+                                <div class="control">
+									<label class="label">Journ&eacute;e</label>
+									  <div class="select">
+										<select id="journee">
+										  <option>JEUDI</option>
+										  <option>VENDREDI</option>
+										  <option>SAMEDI</option>
+										  <option>DIMANCHE</option>
+										</select>
+									  </div>
+									</div>
+                               	<div class="control">
+									<label class="label">Service</label>
+									  <div class="select">
+										<select id="service">
+										  <option>DEJEUNER</option>
+										  <option>DINER</option>
+										</select>
+									  </div>
+								</div>
+                            </div>
+                            <div class="field">
+                                <button class="button is-success" type="submit" onClick="submit()">
+                                     Voir le repas à servir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+      </section>
+	  
+  <script>
+	function submit() {
+		var prenom = document.getElementById('prenom').value;
+		var nom = document.getElementById('nom').value;
+		var selectedJourneeIndex = document.getElementById('journee');
+		var journee = selectedJourneeIndex.options[selectedJourneeIndex.selectedIndex].value;
+		
+		var selectedServiceIndex = document.getElementById('service');
+		var service = selectedServiceIndex.options[selectedServiceIndex.selectedIndex].value;
+		
+		fetch('http://gestion-salle.herokuapp.com/salle/'+ prenom +'/'+ nom +'/'+journee+'/'+service, {
+			method: 'GET',
+			headers: {
+				'Accept': '*',
+			}
+		})
+		.then(response => response.json())
+		.then(response => {
+			document.getElementsByTagName('body')[0].innerHTML = `
+			<section class="hero is-primary is-fullheight">
+			  <div class="hero-body">
+				  <div class="container">
+					<div class="columns is-5-tablet is-4-desktop is-3-widescreen">
+						<div class="column">
+							<div class="box">
+								<div class="field has-text-centered">
+									<img src="https://pbs.twimg.com/profile_images/575744577929244673/oefTn0l5.png" width="167">
+								</div>
+								<div class="field">
+									<label class="label">Entr&eacute;e</label>
+									<div class="control has-icons-left">
+									   <input class="input" type="text"value="${response.entree.nom}" disabled>
+									</div>
+								</div>
+								 <div class="field">
+									<label class="label">Plat</label>
+									<div class="control has-icons-left">
+									   <input class="input" type="text" value="${response.plat.nom}" disabled>
+									</div>
+								</div>
+								<div class="field">
+									<button class="button is-success" type="submit" onClick="window.location.reload()">
+										 Retour
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				  </div>
+			  </div>
+		  </section>
+			`;
+		})
+	}
+</script>
+  </body>
+</html>
